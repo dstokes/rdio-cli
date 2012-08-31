@@ -8,9 +8,10 @@ oa = new oauth(
   '', '', config.key, config.secret, '1.0', '', 'HMAC-SHA1'
 )
 
-execute = (cmd) ->
+execute = (cmd, cb) ->
   exec "osascript -e 'tell app \"Rdio\" to #{cmd}'", (err, sin, sout) ->
-    log err if err?
+    # give rdio some time to actually start the track
+    setTimeout (() -> cb(err, sin) if cb?), 250
 
 makeRequest = (method, params, cb) ->
   params = params ? {}
@@ -23,14 +24,29 @@ makeRequest = (method, params, cb) ->
     cb
   )
 
+# log the current track to the console
+logTrack = ->
+  execute 'name of the current track & " / " & artist of the current track', (err, sout) ->
+    log "Playing: #{sout.replace(/\n/, '')}"
+
 module.exports =
   pause: -> execute 'pause'
-  next: -> execute 'next track'
-  prev: -> execute 'previous track'
+
+  current: ->
+    logTrack()
+
+  next: ->
+    execute 'next track'
+    logTrack()
+
+  prev: ->
+    execute 'previous track'
+    logTrack()
 
   play: (args...) ->
     if args.length is 0
       execute 'play'
+      logTrack()
     else
       makeRequest 'search', { query: args.join(' '), types: 'artist' }, (error, data) ->
         json = JSON.parse data
