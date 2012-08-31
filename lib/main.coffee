@@ -1,28 +1,11 @@
-request = require('request')
-oauth   = require('oauth').OAuth
 exec    = require('child_process').exec
-config  = require('../config.json')
+api     = require('../lib/api.coffee')
 log     = console.log
-
-oa = new oauth(
-  '', '', config.key, config.secret, '1.0', '', 'HMAC-SHA1'
-)
 
 execute = (cmd, cb) ->
   exec "osascript -e 'tell app \"Rdio\" to #{cmd}'", (err, sin, sout) ->
     # give rdio some time to actually start the track
     setTimeout (() -> cb(err, sin) if cb?), 250
-
-makeRequest = (method, params, cb) ->
-  params = params ? {}
-  params.method = method
-  oa.post(
-    'http://api.rdio.com/1/',
-    '', '',
-    params,
-    'application/x-www-form-urlencoded',
-    cb
-  )
 
 # log the current track to the console
 logTrack = ->
@@ -49,14 +32,25 @@ module.exports =
       execute 'play'
       logTrack()
     else
-      makeRequest 'search', { query: args.join(' '), types: 'artist' }, (error, data) ->
-        json = JSON.parse data
-        execute "play source \"#{json.result.results[0].topSongsKey}\""
+      if args[0] is 'more'
+        execute 'get the artist of the current track', (err, response) ->
+          api.search response, ['artist'], (err, data) ->
+            execute "play source \"#{data.result.results[0].topSongsKey}\""
+            logTrack()
+      else
+        # setup a queing system for `play more`
+        api.search args.join(' '), ['artist'], (err, data) ->
+          execute "play source \"#{data.result.results[0].topSongsKey}\""
+          logTrack()
+
+  # shorthand for playpause
+  p: -> execute 'playpause'
 
   vol: (perc = 50) ->
     execute "set the sound volume to #{perc}"
 
-  mute: -> @vol 0
+  mute: ->
+    @vol 0
 
   help: ->
     log 'help'
