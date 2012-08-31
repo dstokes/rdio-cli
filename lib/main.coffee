@@ -30,7 +30,8 @@ logTrack = ->
     log "Playing: #{sout.replace(/\n/, '')}"
 
 module.exports =
-  pause: -> execute 'pause'
+  pause: ->
+    execute 'pause'
 
   current: ->
     logTrack()
@@ -51,6 +52,11 @@ module.exports =
       makeRequest 'search', { query: args.join(' '), types: 'artist' }, (error, data) ->
         json = JSON.parse data
         execute "play source \"#{json.result.results[0].topSongsKey}\""
+
+  vol: (perc = 50) ->
+    execute "set the sound volume to #{perc}"
+
+  mute: -> @vol 0
 
   help: ->
     log 'help'
