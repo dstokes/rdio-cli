@@ -18,6 +18,7 @@ play                 | Play the currently selected track
 play artist _artist_ | Play an artist from your collection
 play album _album_   | Play an album from your collection
 play track _track_   | Play a track from your collection
+play list _list_     | Play a playlist
 play collection      | Play your collections station
 play artist station  | Play the current artists station
 play heavy rotation  | Play your networks heavy rotation station

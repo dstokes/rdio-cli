@@ -57,6 +57,12 @@ module.exports =
       else if type is 'heavy' and query is 'rotation'
         api.getHeavyRotation (error, key) ->
           execute "play source \"#{key}\""
+      else if type is 'list'
+        regex = new RegExp(query, 'i')
+        api.getPlaylists (error, lists) ->
+          owned = lists.owned
+          playlist = list for list in owned when regex.test(list.name)
+          execute "play source \"#{playlist.key}\""
       else
         # play an artists radio station
         if query is 'station'

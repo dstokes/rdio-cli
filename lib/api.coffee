@@ -82,6 +82,13 @@ module.exports =
     @getUser (error, user) ->
       cb error, user.networkHeavyRotationKey
 
+  getPlaylists: (cb) ->
+    self = @
+    @getUser (error, user) ->
+      params = { user: user.key }
+      self.request 'getPlaylists', params, (err, list) ->
+        cb err, JSON.parse(list).result
+
   getObjectInCollection: (type, query, cb) ->
     method = "get#{type.charAt(0).toUpperCase() + type.slice(1)}sInCollection"
     @request method, { query: query }, (error, data) ->
