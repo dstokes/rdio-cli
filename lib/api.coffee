@@ -36,7 +36,6 @@ getToken = (cb) ->
       oa.getOAuthAccessToken token, secret, data.toString().trim(), (error, tok, sec, result) ->
         config.oauthAccessToken = tok
         config.oauthAccessTokenSecret =  sec
-        log 'writing config: ', config
         writeConfig config
         callback()
 

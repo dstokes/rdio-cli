@@ -56,8 +56,8 @@ module.exports =
   mute: ->
     @vol 0
 
-  test: ->
-    api.test()
+  open: ->
+    execute 'activate & reopen'
 
   help: ->
     log 'help'
