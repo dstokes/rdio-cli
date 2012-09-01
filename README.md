@@ -20,6 +20,7 @@ play album _album_   | Play an album from your collection
 play track _track_   | Play a track from your collection
 play collection      | Play your collections station
 play artist station  | Play the current artists station
+play heavy rotation  | Play your networks heavy rotation station
 pause                | Pause playback
 current              | Display info about the current track
 next                 | Play the next track in the queue

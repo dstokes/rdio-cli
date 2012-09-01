@@ -63,15 +63,24 @@ module.exports =
       json = JSON.parse data
       cb(error, json) if cb?
 
-  getCollection: (cb) ->
-    if config?.user?.collectionKey
-      cb null, config.user.collectionKey
+  getUser: (cb) ->
+    if config?.user
+      cb null, config.user
       return
 
-    @request 'currentUser', { extras: 'collectionKey' }, (error, data) ->
+    extras = 'collectionKey,networkHeavyRotationKey'
+    @request 'currentUser', { extras: extras }, (error, data) ->
       config.user = JSON.parse(data).result
       writeConfig config
-      cb error, config.user.collectionKey
+      cb error, config.user
+
+  getCollection: (cb) ->
+    @getUser (error, user) ->
+      cb error, user.collectionKey
+
+  getHeavyRotation: (cb) ->
+    @getUser (error, user) ->
+      cb error, user.networkHeavyRotationKey
 
   getObjectInCollection: (type, query, cb) ->
     method = "get#{type.charAt(0).toUpperCase() + type.slice(1)}sInCollection"

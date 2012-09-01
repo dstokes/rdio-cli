@@ -40,9 +40,6 @@ module.exports =
     else
       type = args[0]
       query = args.slice(1).join(' ')
-      if query is ''
-        log "please provide the name of an #{type}"
-        return
 
       if type is 'more'
         execute 'get the artist of the current track', (err, response) ->
@@ -57,6 +54,9 @@ module.exports =
       else if type is 'track'
         api.getObjectInCollection 'track', query, (error, track) ->
           execute "play source \"#{track.key}\""
+      else if type is 'heavy' and query is 'rotation'
+        api.getHeavyRotation (error, key) ->
+          execute "play source \"#{key}\""
       else
         # play an artists radio station
         if query is 'station'
