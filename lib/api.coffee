@@ -73,17 +73,8 @@ module.exports =
       writeConfig config
       cb error, config.user.collectionKey
 
-  getArtist: (query, cb) ->
-    @request 'getArtistsInCollection', { query: query }, (error, data) ->
-      artist = JSON.parse(data).result[1]
-      cb error, artist
-
-  getAlbum: (query, cb) ->
-    @request 'getAlbumsInCollection', { query: query }, (error, data) ->
-      album = JSON.parse(data).result[1]
-      cb error, album
-
-  getTrack: (query, cb) ->
-    @request 'getTracksInCollection', { query: query }, (error, data) ->
-      track = JSON.parse(data).result[1]
-      cb error, track
+  getObjectInCollection: (type, query, cb) ->
+    method = "get#{type.charAt(0).toUpperCase() + type.slice(1)}sInCollection"
+    @request method, { query: query }, (error, data) ->
+      obj = JSON.parse(data).result[1]
+      cb error, obj
