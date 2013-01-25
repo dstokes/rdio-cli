@@ -4,12 +4,33 @@ require('coffee-script');
 
 var path   = require('path')
   , rdio   = require(path.join(__dirname, '..', 'lib/main.coffee'))
+  , repl   = require(path.join(__dirname, '..', 'lib/repl.coffee'))
   , args   = process.argv.splice(2)
-  , log    = console.log
   , action = (args.shift() || 'help');
   ;
 
-if(rdio[action]) {
-  rdio[action].apply(rdio, args);
+function exec() {
+  var args = Array.prototype.slice.call(arguments)
+    , action = args.shift();
+  if(rdio[action]) rdio[action].apply(rdio, args);
 }
 
+// handle single command
+if(args.length > 0) {
+  return exec(action, args);
+}
+
+// otherwise launch repl
+repl.start();
+
+repl
+  .on('keypress', function(key) {
+    exec(key, function() {
+      if(key !== 'p') { repl.clear(); }
+    });
+  })
+  .on('line', function(line) {
+    var len = line.length
+      , args = line.substr(0, len-1).split(' ');
+    exec(args.shift(), args);
+  });

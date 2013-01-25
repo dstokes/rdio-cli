@@ -1,6 +1,10 @@
 exec    = require('child_process').exec
 api     = require('../lib/api.coffee')
 log     = console.log
+stdin   = process.stdin
+stdout  = process.stdout
+
+delay = (ms, func) -> setTimeout func, ms
 
 execute = (cmd, cb) ->
   callback = (error, response) ->
@@ -12,27 +16,38 @@ execute = (cmd, cb) ->
   exec "osascript -e 'tell app \"Rdio\" to #{cmd}'", (err, sin, sout) ->
     callback err, sin.replace(/\n/, '')
 
+clear = ->
+  process.stdout.write '\u001B[2J\u001B[0;0f'
+
 # log the current track to the console
-logTrack = ->
+logTrack = (shouldClear) ->
   # the correct track data lags after a new track starts
   setTimeout (() ->
     execute 'name of the current track & " / " & artist of the current track', (err, sout) ->
+      clear() if shouldClear
       log "Playing: #{sout.replace(/\n/, '')}"), 500
 
 module.exports =
   pause: ->
     execute 'pause'
 
-  current: ->
-    logTrack()
+  current: (cb = ->) ->
+    @getTrack (info) ->
+      cb(info)
+      log("Playing: #{info}")
+
+  getTrack: (cb) ->
+    delay 500, () ->
+      execute 'name of the current track & " / " & artist of the current track', (err, stdout) ->
+        cb(stdout.replace /\n/, '')
 
   next: ->
     execute 'next track'
-    logTrack()
+    logTrack(@isRepl)
 
   prev: ->
     execute 'previous track'
-    logTrack()
+    logTrack(@isRepl)
 
   play: (args...) ->
     if args.length is 0
@@ -75,8 +90,8 @@ module.exports =
             execute "play source \"#{artist.topSongsKey}\""
 
   # shorthand for playpause
-  p: ->
-    execute 'playpause'
+  p: (cb) ->
+    execute 'playpause', cb
 
   vol: (perc = 50) ->
     execute "set the sound volume to #{perc}"
@@ -89,3 +104,8 @@ module.exports =
 
   help: ->
     log 'help'
+
+  # aliases
+  P: (cb) -> @prev(cb)
+  n: (cb) -> @next(cb)
+  r: (cb) -> @current(cb)
