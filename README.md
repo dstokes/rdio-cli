@@ -1,8 +1,10 @@
 # Rdio-CLI
-Rrdio-CLI is a cli interface to the rdio desktop app for Mac.
+A NodeJS cli interface to the rdio desktop app for Mac.
 
 ## Installation
-* Clone it
+```shell
+git clone git@github.com:dstokes/rdio-cli.git
+```
 * Get yourself an rdio api key
 * Create a config.json file in the root of the project with:
 ```
@@ -37,6 +39,7 @@ P                    | Shorthand previous
 Running the <code>rdio</code> command without any arguments will drop you
 into 'repl' mode.  From here you can execute all of the shorthand commands
 with a single keystroke, or hit 'x' to drop into readline mode where
-complex commands like 'play artist thrice' can be executed.
+complex commands like <code>> play artist thrice</code> can be executed.
+![Screenshot](http://f.cl.ly/items/2r2G3w2n3G2Z273C2v3O/Screen%20Shot%202013-01-25%20at%2011.21.18%20PM.png)
 
 * This module is still under heavy development and is equipped with all kinds of fancy bugs
