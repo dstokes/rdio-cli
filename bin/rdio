@@ -13,6 +13,7 @@ function exec() {
   var args = Array.prototype.slice.call(arguments)
     , action = args.shift();
   if(rdio[action]) rdio[action].apply(rdio, args[0]);
+  else repl.clear() && repl.write(getTrackBanner(rdio.toJSON()))
 }
 
 function getTrackBanner(data) {
@@ -20,8 +21,8 @@ function getTrackBanner(data) {
     , divider = [];
 
   for(var i = 0; i < longest; i++) divider.push('_');
-
-  return " Artist: " + data.artist + "\n" +
+  return " Rdio CLI\n\n" +
+         " Artist: " + data.artist + "\n" +
          " Track: " + data.track + "\n" +
          " Album: " + data.album + "\n" +
          " " + divider.join('') + "\n\n "
