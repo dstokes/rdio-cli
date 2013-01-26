@@ -31,12 +31,8 @@ play list _list_     | Play a playlist
 play collection      | Play your collections station
 play artist station  | Play the current artists station
 play heavy rotation  | Play your networks heavy rotation station
-pause                | Pause playback
-current              | Display info about the current track
 next                 | Play the next track in the queue
 prev                 | Play the previous track in the queue
-vol _percentage_     | Change the volume
-mute                 | Set volume to 0
 p                    | Shorthand playpause toggle
 n                    | Shorthand next
 P                    | Shorthand previous
