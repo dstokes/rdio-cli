@@ -12,16 +12,33 @@ var path   = require('path')
 function exec() {
   var args = Array.prototype.slice.call(arguments)
     , action = args.shift();
-  if(rdio[action]) rdio[action].apply(rdio, args);
+  if(rdio[action]) rdio[action].apply(rdio, args[0]);
+}
+
+function getTrackBanner(data) {
+  var longest = Math.max(data.artist.length, data.track.length) + 9
+    , divider = [];
+
+  for(var i = 0; i < longest; i++) divider.push('_');
+
+  return " Artist: " + data.artist + "\n" +
+         " Track: " + data.track + "\n" +
+         " Album: " + data.album + "\n" +
+         " " + divider.join('') + "\n\n "
 }
 
 // handle single command
-if(args.length > 0) {
+if(action && action !== 'help') {
   return exec(action, args);
 }
 
 // otherwise launch repl
 repl.start();
+rdio.on('change', function(model, options) {
+  json = model.toJSON()
+  repl.clear();
+  repl.write(getTrackBanner(model.toJSON()));
+});
 
 repl
   .on('keypress', function(key) {
